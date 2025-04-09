@@ -1,0 +1,13 @@
+[
+    {
+      "id": 1,
+      "title": "Reverse a String",
+      "description": "Write a function to reverse a string.",
+      "function_name": "reverse_string",
+      "template_code": "def reverse_string(s):\n    # Your code here\n    pass",
+      "test_cases": [
+        {"input": "hello", "output": "olleh"},
+        {"input": "world", "output": "dlrow"}
+      ]
+    }
+  ]
