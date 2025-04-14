@@ -1,13 +1,46 @@
 [
-    {
-      "id": 1,
-      "title": "Reverse a String",
-      "description": "Write a function to reverse a string.",
-      "function_name": "reverse_string",
-      "template_code": "def reverse_string(s):\n    # Your code here\n    pass",
-      "test_cases": [
-        {"input": "hello", "output": "olleh"},
-        {"input": "world", "output": "dlrow"}
-      ]
-    }
-  ]
+  {
+    "id": 1,
+    "title": "Sum of Two Numbers",
+    "difficulty": "Easy",
+    "description": "Write a function that returns the sum of two numbers.",
+    "function_name": "sum_two",
+    "test_cases": [
+      { "input": [3, 5], "output": 8 },
+      { "input": [-1, 4], "output": 3 }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Find Maximum",
+    "difficulty": "Easy",
+    "description": "Return the maximum of a list of numbers.",
+    "function_name": "find_max",
+    "test_cases": [
+      { "input": [[1, 3, 2]], "output": 3 },
+      { "input": [[-1, -5, -3]], "output": -1 }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Fibonacci Number",
+    "difficulty": "Intermediate",
+    "description": "Return the nth Fibonacci number.",
+    "function_name": "fibonacci",
+    "test_cases": [
+      { "input": [5], "output": 5 },
+      { "input": [8], "output": 21 }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Is Prime",
+    "difficulty": "Hard",
+    "description": "Return True if a number is prime, else False.",
+    "function_name": "is_prime",
+    "test_cases": [
+      { "input": [7], "output": true },
+      { "input": [9], "output": false }
+    ]
+  }
+]

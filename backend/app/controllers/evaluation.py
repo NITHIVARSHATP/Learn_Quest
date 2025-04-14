@@ -1,5 +1,3 @@
-import io
-import contextlib
 from app.models.challenge_model import get_challenge_by_id
 
 def evaluate_code(code, challenge_id):
@@ -12,16 +10,19 @@ def evaluate_code(code, challenge_id):
     results = []
 
     try:
+        # Sandbox-like isolation (very basic)
         local_vars = {}
-        exec(code, {}, local_vars)
-        func = local_vars.get(function_name)
+        safe_globals = {"__builtins__": {}}
+        exec(code, safe_globals, local_vars)
 
+        func = local_vars.get(function_name)
         if not func:
             return {"error": f"Function '{function_name}' not defined."}
 
         for case in test_cases:
             try:
-                result = func(case["input"])
+                # unpacking the input list into args
+                result = func(*case["input"])
                 passed = result == case["output"]
                 results.append({
                     "input": case["input"],
@@ -30,7 +31,11 @@ def evaluate_code(code, challenge_id):
                     "passed": passed
                 })
             except Exception as e:
-                results.append({"error": str(e), "input": case["input"]})
+                results.append({
+                    "input": case["input"],
+                    "error": str(e),
+                    "passed": False
+                })
 
         passed_all = all(r.get("passed") for r in results if "passed" in r)
         return {"results": results, "passed_all": passed_all}
