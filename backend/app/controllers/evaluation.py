@@ -1,44 +1,33 @@
-from app.models.challenge_model import get_challenge_by_id
+import subprocess
+import json
 
 def evaluate_code(code, challenge_id):
-    challenge = get_challenge_by_id(challenge_id)
-    if not challenge:
-        return {"error": "Challenge not found"}
+    # You can save the code to a file and run it with the respective compiler/interpreter.
+    # For this example, we're assuming a Java-based challenge.
 
-    function_name = challenge["function_name"]
-    test_cases = challenge["test_cases"]
-    results = []
+    # Save the submitted code to a file (you can change this to handle different languages)
+    with open("temp_solution.java", "w") as f:
+        f.write(code)
 
-    try:
-        # Sandbox-like isolation (very basic)
-        local_vars = {}
-        safe_globals = {"__builtins__": {}}
-        exec(code, safe_globals, local_vars)
+    # Compile the code (for Java)
+    compile_process = subprocess.Popen(["javac", "temp_solution.java"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    compile_stdout, compile_stderr = compile_process.communicate()
 
-        func = local_vars.get(function_name)
-        if not func:
-            return {"error": f"Function '{function_name}' not defined."}
+    if compile_process.returncode != 0:
+        return {"output": f"Compilation Error:\n{compile_stderr.decode()}"}
 
-        for case in test_cases:
-            try:
-                # unpacking the input list into args
-                result = func(*case["input"])
-                passed = result == case["output"]
-                results.append({
-                    "input": case["input"],
-                    "expected": case["output"],
-                    "got": result,
-                    "passed": passed
-                })
-            except Exception as e:
-                results.append({
-                    "input": case["input"],
-                    "error": str(e),
-                    "passed": False
-                })
+    # If compilation is successful, run the code with test cases
+    run_process = subprocess.Popen(
+        ["java", "temp_solution"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    run_stdout, run_stderr = run_process.communicate()
 
-        passed_all = all(r.get("passed") for r in results if "passed" in r)
-        return {"results": results, "passed_all": passed_all}
+    if run_process.returncode != 0:
+        return {"output": f"Runtime Error:\n{run_stderr.decode()}"}
 
-    except Exception as e:
-        return {"error": str(e)}
+    # Evaluate the output against the test cases
+    expected_output = "expected output for the test case"  # You can load this from the challenge model/test cases
+    if run_stdout.decode().strip() == expected_output:
+        return {"output": "Code passed the test case!"}
+    else:
+        return {"output": f"Code failed the test case. Expected {expected_output}, got {run_stdout.decode().strip()}"}

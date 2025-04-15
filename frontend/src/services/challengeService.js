@@ -19,7 +19,6 @@ export async function submitSolution(code, challenge_id) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ code, challenge_id }),
   });
-
   return res.json();
 }
 
