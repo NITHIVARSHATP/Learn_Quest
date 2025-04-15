@@ -5,7 +5,8 @@ def load_challenges():
         return json.load(f)
 
 def get_all_challenges():
-    return load_challenges()
+    with open('app/data/challenges.json') as f:
+        return json.load(f)
 
 def get_challenge_by_id(challenge_id):
     challenges = load_challenges()

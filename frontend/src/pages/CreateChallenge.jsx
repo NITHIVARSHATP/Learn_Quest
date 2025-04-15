@@ -1,115 +1,153 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createChallenge } from "../services/challengeService";
 
 const CreateChallenge = () => {
   const [form, setForm] = useState({
+    id: "",
     title: "",
     description: "",
-    difficulty: "Easy",
-    function_name: "",
-    test_cases: [{ input: "", output: "" }],
+    difficulty: "easy",
+    inputFormat: "",
+    outputFormat: "",
+    testCases: [{ input: "", output: "" }],
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    setForm({ ...form, [name]: value });
   };
 
   const handleTestCaseChange = (index, field, value) => {
-    const updated = [...form.test_cases];
-    updated[index][field] = value;
-    setForm((f) => ({ ...f, test_cases: updated }));
+    const updatedTestCases = [...form.testCases];
+    updatedTestCases[index][field] = value;
+    setForm({ ...form, testCases: updatedTestCases });
   };
 
-  const handleAddCase = () => {
-    setForm((f) => ({ ...f, test_cases: [...f.test_cases, { input: "", output: "" }] }));
-  };
-
-  const handleSubmit = async () => {
-    const res = await fetch("http://localhost:5000/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+  const addTestCase = () => {
+    setForm({
+      ...form,
+      testCases: [...form.testCases, { input: "", output: "" }],
     });
-
-    alert("Challenge Created ✅");
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevents the page from reloading on submit
+    
+    try {
+      const res = await createChallenge(form); // 🟢 Submit using the service
+      console.log(res);
+      
+      if (res.success) {
+        alert("Challenge submitted successfully!");
+        navigate("/arena"); // 🔁 Redirect to Arena after submit
+      } else {
+        alert("Error submitting challenge! Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting challenge:", error);
+      alert("Error submitting challenge! Please try again.");
+    }
+  };
+  
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-700 via-purple-800 to-pink-800 text-white px-4 flex justify-center">
-    <div className="w-full max-w-4xl bg-gray-900 p-6 rounded-lg shadow-xl mt-8 mb-8">
-     <h1 className="text-4xl font-semibold text-cyan-400 text-center mb-8">
-          Forge a New Quest 🛠
-        </h1>
-
+    <div className="p-6 max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Create New Challenge</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
-          className="w-full p-4 mb-4 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
-          placeholder="Challenge Title"
+          type="text"
+          name="id"
+          placeholder="Challenge ID"
+          value={form.id}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
           name="title"
+          placeholder="Title"
           value={form.title}
           onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
         />
-
         <textarea
-          className="w-full p-4 mb-4 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
-          placeholder="Description"
           name="description"
+          placeholder="Description"
           value={form.description}
           onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
         />
-
-        <input
-          className="w-full p-4 mb-4 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
-          placeholder="Function Name"
-          name="function_name"
-          value={form.function_name}
-          onChange={handleChange}
-        />
-
         <select
           name="difficulty"
           value={form.difficulty}
           onChange={handleChange}
-          className="w-full p-4 mb-6 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
+          className="w-full p-2 border rounded"
         >
-          <option value="Easy">Easy</option>
-          <option value="Intermediate">Intermediate</option>
-          <option value="Hard">Hard</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
         </select>
-
-        <h2 className="text-xl font-semibold text-white mb-4">Test Cases</h2>
-        {form.test_cases.map((tc, idx) => (
-          <div key={idx} className="flex gap-4 mb-4">
-            <input
-              placeholder="Input"
-              className="w-full p-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
-              value={tc.input}
-              onChange={(e) => handleTestCaseChange(idx, "input", e.target.value)}
-            />
-            <input
-              placeholder="Output"
-              className="w-full p-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300 bg-gray-200"
-              value={tc.output}
-              onChange={(e) => handleTestCaseChange(idx, "output", e.target.value)}
-            />
-          </div>
-        ))}
-
-        <button
-          onClick={handleAddCase}
-          className="bg-teal-500 px-4 py-2 rounded-lg text-white font-semibold mb-6 hover:bg-teal-400 transition duration-300"
-        >
-          ➕ Add Test Case
-        </button>
-
-        <div className="text-center">
+        <textarea
+          name="inputFormat"
+          placeholder="Input Format"
+          value={form.inputFormat}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        <textarea
+          name="outputFormat"
+          placeholder="Output Format"
+          value={form.outputFormat}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        <div>
+          <h3 className="font-semibold mb-2">Test Cases</h3>
+          {form.testCases.map((testCase, index) => (
+            <div key={index} className="mb-2">
+              <input
+                type="text"
+                placeholder="Input"
+                value={testCase.input}
+                onChange={(e) =>
+                  handleTestCaseChange(index, "input", e.target.value)
+                }
+                className="w-full p-2 mb-1 border rounded"
+              />
+              <input
+                type="text"
+                placeholder="Output"
+                value={testCase.output}
+                onChange={(e) =>
+                  handleTestCaseChange(index, "output", e.target.value)
+                }
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          ))}
           <button
-            onClick={handleSubmit}
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-3 rounded-lg text-white text-lg font-bold shadow-md hover:from-blue-600 hover:to-cyan-600 transition duration-300"
+            type="button"
+            onClick={addTestCase}
+            className="mt-2 px-3 py-1 bg-blue-600 text-white rounded"
           >
-            Create Challenge
+            Add Test Case
           </button>
         </div>
-      </div>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-green-600 text-white rounded"
+        >
+          Submit Challenge
+        </button>
+      </form>
     </div>
   );
 };

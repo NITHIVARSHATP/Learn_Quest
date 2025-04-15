@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Arena from "./pages/Arena";
 import CreateChallenge from "./pages/CreateChallenge";
-// Optional: import NotFound from "./pages/NotFound"; if you want a 404 page
+import ChallengeDetails from "./pages/ChallengeDetails";  // Import the ChallengeDetails component
 
 function App() {
   return (
@@ -14,8 +14,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/arena" element={<Arena />} />
         <Route path="/create" element={<CreateChallenge />} />
-        {/* Optional */}
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="/quest/:id" element={<ChallengeDetails />} />
+
+
       </Routes>
     </Router>
   );

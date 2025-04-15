@@ -1,20 +1,15 @@
- 
-import { motion } from "framer-motion";
+// src/components/ChallengeCard.jsx
+import React from "react";
 
 const ChallengeCard = ({ challenge, onClick }) => {
   return (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      className="bg-card text-white p-4 rounded-xl shadow-lg cursor-pointer border-l-4 border-primary hover:border-accent transition"
-      onClick={onClick}
+    <div
+      className="p-4 bg-gray-800 rounded-lg shadow-md cursor-pointer"
+      onClick={onClick} // This will handle the click and navigate
     >
-      <h2 className="text-xl font-semibold mb-1">{challenge.title}</h2>
-      <p className="text-sm text-gray-300 mb-2">{challenge.description}</p>
-      <span className={`text-xs px-2 py-1 rounded-full bg-primary text-white`}>
-        {challenge.difficulty}
-      </span>
-    </motion.div>
+      <h3 className="text-xl font-bold text-cyan-400">{challenge.title}</h3>
+      <p className="text-gray-400">{challenge.description}</p>
+    </div>
   );
 };
 

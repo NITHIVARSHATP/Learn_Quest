@@ -40,3 +40,29 @@ def submit_code():
 
     result = evaluate_code(code, challenge_id)
     return jsonify(result)
+
+
+
+@quests_bp.route('/create', methods=['POST'])
+def create_challenge():
+    data = request.json
+
+    # Get challenge data from the request body
+    new_challenge = {
+        "id": len(get_all_challenges()) + 1,  # Simple ID generation logic
+        "title": data.get("title"),
+        "difficulty": data.get("difficulty"),
+        "description": data.get("description"),
+        "function_name": data.get("function_name"),
+        "test_cases": data.get("test_cases")
+    }
+
+    # Add new challenge to the JSON file
+    challenges = get_all_challenges()
+    challenges.append(new_challenge)
+
+    # Save the updated challenges list back to the JSON file
+    with open("app/data/challenges.json", "w") as f:
+        json.dump(challenges, f, indent=4)
+
+    return jsonify({"message": "Challenge created successfully"}), 201

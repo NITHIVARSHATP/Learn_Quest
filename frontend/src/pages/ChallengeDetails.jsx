@@ -1,83 +1,50 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-python";
-import "prismjs/themes/prism-tomorrow.css";
-import { submitSolution } from "../services/challengeService";
+import { fetchChallengeDetails } from "../services/challengeService"; // Make sure this function is correctly implemented
 
 const ChallengeDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Extract challenge ID from the URL
   const [challenge, setChallenge] = useState(null);
-  const [code, setCode] = useState("");
-  const [result, setResult] = useState(null);
-  const resultRef = useRef(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/quest/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setChallenge(data);
-        setCode(`def ${data.function_name}(...):\n    # Write your code here`);
-      });
-  }, [id]);
+    const getChallenge = async () => {
+      try {
+        // Fetch the challenge details based on the ID
+        const challengeData = await fetchChallengeDetails(id);
+        setChallenge(challengeData);
+      } catch (error) {
+        console.error("Error fetching challenge details:", error);
+      }
+      
+    };
+    getChallenge();
+  }, [id]); // Fetch when the ID changes
 
-  const handleSubmit = async () => {
-    setResult({ loading: true });
-    const res = await submitSolution(code, parseInt(id));
-    setResult(res);
-
-    // Scroll to results
-    setTimeout(() => {
-      resultRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 300);
-  };
-
-  if (!challenge) return <p className="text-white p-4">Loading challenge...</p>;
+  if (!challenge) {
+    return <p>Loading challenge details...</p>; // Show loading message if the data is not yet loaded
+  }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2 text-cyan-400">{challenge.title}</h1>
-      <p className="text-gray-300 mb-6">{challenge.description}</p>
-
-      <div className="bg-gray-800 p-4 rounded-xl shadow-lg mb-4">
-        <Editor
-          value={code}
-          onValueChange={setCode}
-          highlight={(code) => highlight(code, languages.python, "python")}
-          padding={10}
-          className="bg-black text-green-200 rounded-lg text-sm font-mono overflow-auto"
-          style={{ minHeight: "280px" }}
-        />
+    <div className="min-h-screen bg-gray-900 text-white px-6 py-8">
+      <h1 className="text-4xl font-bold text-cyan-400 mb-6">{challenge.title}</h1>
+      <p className="text-gray-400 mb-4">{challenge.description}</p>
+      <div className="text-sm text-cyan-400 mb-6">
+        <strong>Difficulty:</strong> {challenge.difficulty}
       </div>
-
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md font-semibold text-white mb-6"
-      >
-        🧪 Submit Code
-      </button>
-
-      <div ref={resultRef}>
-        {result?.loading && <p className="text-gray-400">⏳ Evaluating...</p>}
-        {result?.error && <p className="text-red-500">{result.error}</p>}
-        {result?.results && (
-          <div className="bg-gray-800 p-4 rounded-xl shadow-lg space-y-4">
-            <h2 className="text-xl font-bold text-white mb-2">🧾 Results</h2>
-            {result.results.map((r, i) => (
-              <div
-                key={i}
-                className={`p-3 rounded-md ${
-                  r.passed ? "bg-green-700" : "bg-red-700"
-                }`}
-              >
-                <p>📥 <strong>Input:</strong> {JSON.stringify(r.input)}</p>
-                <p>🎯 <strong>Expected:</strong> {JSON.stringify(r.expected)}</p>
-                <p>🧪 <strong>Got:</strong> {JSON.stringify(r.got)}</p>
-                <p>{r.passed ? "✅ Passed" : r.error ? `❌ Error: ${r.error}` : "❌ Failed"}</p>
+      <div>
+        <h3 className="text-lg text-cyan-300 mb-4">Test Cases</h3>
+        <ul>
+          {challenge.test_cases.map((testCase, index) => (
+            <li key={index}>
+              <div>
+                <strong>Input:</strong> {testCase.input}
               </div>
-            ))}
-          </div>
-        )}
+              <div>
+                <strong>Output:</strong> {testCase.output}
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

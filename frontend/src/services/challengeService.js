@@ -1,4 +1,3 @@
-// src/services/challengeService.js
 const API_BASE = import.meta.env.VITE_API_URL;
 
 export async function fetchChallenges(difficulty = "", search = "") {
@@ -21,5 +20,29 @@ export async function submitSolution(code, challenge_id) {
     body: JSON.stringify({ code, challenge_id }),
   });
 
+  return res.json();
+}
+
+// ✅ Add this to handle creation
+export async function createChallenge(challengeData) {
+  const res = await fetch(`${API_BASE}/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(challengeData),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create challenge");
+  }
+
+  return res.json();
+}
+
+
+export async function fetchChallengeDetails(id) {
+  const res = await fetch(`${API_BASE}/quest/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch challenge details");
+  }
   return res.json();
 }

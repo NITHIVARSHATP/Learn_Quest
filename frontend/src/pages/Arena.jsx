@@ -1,4 +1,5 @@
-// src/pages/Arena.jsx
+// frontend/src/pages/Arena.jsx
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChallengeCard from "../components/ChallengeCard";
@@ -44,7 +45,7 @@ const Arena = () => {
             <ChallengeCard
               key={challenge.id}
               challenge={challenge}
-              onClick={() => navigate(`/challenge/${challenge.id}`)}
+              onClick={() => navigate(`/quest/${challenge.id}`)}
             />
           ))}
         </div>
