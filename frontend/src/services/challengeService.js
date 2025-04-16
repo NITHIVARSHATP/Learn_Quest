@@ -45,3 +45,5 @@ export async function fetchChallengeDetails(id) {
   }
   return res.json();
 }
+
+

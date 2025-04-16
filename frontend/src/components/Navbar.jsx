@@ -31,6 +31,14 @@ const Navbar = () => {
       Forge Quest
     </button>
   </li>
+  <li>
+    <button
+      onClick={() => navigate("/leaderboard")}
+      className="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-300 transition duration-300"
+    >
+      LeaderBoard
+    </button>
+  </li>
 </ul>
     </nav>
   );

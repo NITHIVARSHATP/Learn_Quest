@@ -4,7 +4,9 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Arena from "./pages/Arena";
 import CreateChallenge from "./pages/CreateChallenge";
-import ChallengeDetails from "./pages/ChallengeDetails";  // Import the ChallengeDetails component
+import ChallengeDetails from "./pages/ChallengeDetails";  
+import Leaderboard from "./pages/Leaderboard";
+
 
 function App() {
   return (
@@ -15,8 +17,7 @@ function App() {
         <Route path="/arena" element={<Arena />} />
         <Route path="/create" element={<CreateChallenge />} />
         <Route path="/quest/:id" element={<ChallengeDetails />} />
-
-
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   );
